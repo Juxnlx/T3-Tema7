@@ -8,22 +8,28 @@ import java.sql.SQLException;
 
 public class Ejemplo {
 	public static void main(String[] args) {
-		
+
 		String url = "jdbc:mysql://localhost/InstitutoDB";
 		String usuario = "root";
 		String contraseña = "Juanl2004";
 
 		try (Connection con = DriverManager.getConnection(url, usuario, contraseña)) {
 			Statement st = con.createStatement();
-			
+
 			ResultSet rs = st.executeQuery("select * from estudiantes");
-			
+
 			while (!rs.next()) {
-				
+
+				String nombre = rs.getString(1);
+
+				String apellidos = rs.getString(3);
+
+				System.out.println(nombre + " " + apellidos);
+
 			}
-			
+
 			st.executeUpdate("insert...");
-			
+
 		} catch (SQLException e) {
 			System.out.println("Error con la base de datos: " + e);
 		}
