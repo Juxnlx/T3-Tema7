@@ -31,7 +31,8 @@ public class Ejercicio10 {
 				+ "JOIN Cursos c ON m.id_curso = c.id_curso WHERE c.nombre = ?";
 
 		// Creamos la conexión con el método DriverManager con la base de datos
-		// InstitutoDB.
+		// InstitutoDB. Hacemos uso del método getConnection y les pasamos como
+		// parametro las constantes necesarias para crear la conexión.
 		try (Connection con = DriverManager.getConnection(Constantes.URL, Constantes.USUARIO, Constantes.PASSWORD)) {
 
 			// Creamos la variable hayResultados como boolean para mostrar si hay alumnos
