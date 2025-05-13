@@ -1,25 +1,17 @@
 package boletin1.ejercicio7;
 
-import java.sql.Statement;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Scanner;
+
+import utiles.Constantes;
 
 public class Ejercicio7 {
 
 	public static void main(String[] args) {
-
-		// Creamos la variable url como String para almacenar la ruta donde se encuentra
-		// la base de datos.
-		String url = "jdbc:mysql://localhost/InstitutoDB";
-
-		// Creamos la variable usuario como String para almacenar el nombre de usuario
-		String usuario = "root";
-
-		// Creamos la variable password como String para almacenar la contraseña del
-		// usuario.
-		String password = "Juanl2004";
 
 		// Creamos la variable nombre como String para almacenar el nombre del alumno.
 		String nombre;
@@ -44,10 +36,10 @@ public class Ejercicio7 {
 		// como alumno a la base de datos.
 		Scanner sc = new Scanner(System.in);
 
-		try (Connection con = DriverManager.getConnection(url, usuario, password)) {
-
-			// Creamos el objeto de tipo Statement
-			Statement st = con.createStatement();
+		// Creamos la conexión con el método DriverManager con la base de datos
+		// InstitutoDB. Hacemos uso del método getConnection y les pasamos como
+		// parametro las constantes necesarias para crear la conexión.
+		try (Connection con = DriverManager.getConnection(Constantes.URL, Constantes.USUARIO, Constantes.PASSWORD)) {
 
 			// Creamos la variable nuevoAlumno como String para almacenar la instrucción en
 			// sql que nos añadira al nuevo alumno.
@@ -82,12 +74,33 @@ public class Ejercicio7 {
 
 			// Almacenamos en la variable nuevoAlumno la instrucción INSERT con los datos
 			// del nuevo alumno solicitados al usuario.
-			nuevoAlumno = "INSERT INTO Estudiantes (nombre, apellido, fecha_nacimiento, email, telefono) " + "VALUES ('"
-					+ nombre + "', '" + apellido + "', '" + fechaNacimiento + "', '" + email + "', " + telefono + ")";
+			nuevoAlumno = "INSERT INTO Estudiantes (nombre, apellido, fecha_nacimiento, email, telefono) VALUES (?, ?, ?, ?, ?)";
 
-			// Disponemos del método executeUpdate para ejecutar al instrucción que se le
-			// pasa por parametro, en este caso añadimos un nuevo alumno.
-			filas = st.executeUpdate(nuevoAlumno);
+			// Creamos el objeto de tipo PreparedStatement para sustituir valores '?'.
+			PreparedStatement ps = con.prepareStatement(nuevoAlumno);
+
+			// Asignamos el nombre introducido por el usuario al primer parametro, que
+			// corresponde con el primer '?'.
+			ps.setString(1, nombre);
+			// Asignamos el apellido introducido por el usuario al segundo parametro, que
+			// corresponde con el primer '?'.
+			ps.setString(2, apellido);
+			// Comprobamos si el campo de fecha de nacimiento está vacío:
+			// - Si está vacío, se inserta NULL en la base de datos.
+			// - Si tiene valor, se convierte el String al tipo Date y se inserta.
+			ps.setDate(3, fechaNacimiento.isEmpty() ? null : Date.valueOf(fechaNacimiento));
+			// Comprobamos si el email está vacío:
+			// - Si está vacío, se inserta NULL.
+			// - Si tiene valor, se inserta como está.
+			ps.setString(4, email.isEmpty() ? null : email);
+			// Comprobamos si el teléfono está vacío:
+			// - Si está vacío, se inserta NULL.
+			// - Si tiene valor, se inserta como está.
+			ps.setString(5, telefono >= 100000000 && telefono <= 999999999 ? null : String.valueOf(telefono));
+
+			// Disponemos del método executeUpdate para ejecutar la instrucción, en este
+			// caso añadimos un nuevo alumno.
+			filas = ps.executeUpdate();
 
 			// Imprimimos un mensaje mostrando si el estudiante se ha añadido correctamente
 			// y mostramos cuantas filas han sido modificadas.
@@ -97,7 +110,7 @@ public class Ejercicio7 {
 			System.out.println("Error con la base de datos: " + e);
 		}
 
-		//Cierre Scanner
+		// Cierre Scanner
 		sc.close();
 	}
 
