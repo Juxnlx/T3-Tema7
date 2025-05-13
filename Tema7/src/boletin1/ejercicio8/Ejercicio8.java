@@ -6,19 +6,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
 
+import utiles.Constantes;
+
 public class Ejercicio8 {
 
 	public static void main(String[] args) {
-		// Creamos la variable url como String para almacenar la ruta donde se encuentra
-		// la base de datos.
-		String url = "jdbc:mysql://localhost/InstitutoDB";
-
-		// Creamos la variable usuario como String para almacenar el nombre de usuario
-		String usuario = "root";
-
-		// Creamos la variable password como String para almacenar la contraseña del
-		// usuario.
-		String password = "Juanl2004";
 
 		// Creamos la variable idEstudiante como int para almacenar el id del
 		// estudiante.
@@ -28,9 +20,12 @@ public class Ejercicio8 {
 		// como alumno a la base de datos.
 		Scanner sc = new Scanner(System.in);
 
-		try (Connection con = DriverManager.getConnection(url, usuario, password)) {
+		// Creamos la conexión con el método DriverManager con la base de datos
+		// InstitutoDB. Hacemos uso del método getConnection y les pasamos como
+		// parametro las constantes necesarias para crear la conexión.
+		try (Connection con = DriverManager.getConnection(Constantes.URL, Constantes.USUARIO, Constantes.PASSWORD)) {
 
-			// Creamos el objeto de tipo Statement
+			// Creamos el objeto de tipo Statement para ejecutar la sentencia.
 			Statement st = con.createStatement();
 
 			// Creamos la variable borrarCalificaciones como String para almacenar la
@@ -86,6 +81,8 @@ public class Ejercicio8 {
 				System.out.println("No se encontró ningún estudiante con ese ID.");
 			}
 
+			// Capturamos esta excepción para mostrar un error en caso de que no se pueda
+			// establecer conexión con la base de datos.
 		} catch (SQLException e) {
 			System.out.println("Error con la base de datos: " + e);
 		}
