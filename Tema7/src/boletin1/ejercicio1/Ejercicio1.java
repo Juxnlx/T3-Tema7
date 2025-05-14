@@ -1,6 +1,5 @@
 package boletin1.ejercicio1;
 
-import java.sql.Statement;
 
 import utiles.Constantes;
 
